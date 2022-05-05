@@ -1,25 +1,37 @@
-import logo from './logo.svg';
 import './App.css';
+import React, { useState, useEffect } from 'react'
 
 function App() {
+  const [page, setPage] = useState(1)
+  const [users, setUsers] = useState([])
+
+
+  function loadUser() {
+    fetch(`https://reqres.in/api/users?page=${page}`)
+      .then(res => res.json())
+      .then(result => setUsers(result.data))
+  }
+  useEffect(() => {
+    loadUser()
+  }, [page])
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    <React.Fragment>
+      <ul>
+        {
+          users.map(user =>
+            <li key={user.id}><div>Имя: {user.first_name}<br></br>{user.email}</div></li>
+          )
+        }
+      </ul>
+      <button onClick={() =>
+        setPage(page - 1)
+      }>Предыдущая страница</button>
+      <button onClick={() =>
+        setPage(page + 1)
+      }>Следующая страница</button>
+    </React.Fragment>
+  )
 }
 
 export default App;
